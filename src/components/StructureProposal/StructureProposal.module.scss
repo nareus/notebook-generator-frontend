@@ -1,6 +1,7 @@
 // components/StructureProposal.module.scss
 .structureProposalContainer {
   max-width: 800px;
+  min-width: 400px;
   margin: 0 auto;
   padding: 1.5rem;
   background-color: #ffffff;
@@ -102,4 +103,26 @@
       max-height: 300px;
     }
   }
+}
+
+.titleInput,
+.sectionInput {
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: inherit;
+  font-weight: inherit;
+  width: 100%;
+  padding: 4px;
+
+  &:hover,
+  &:focus {
+    border-color: #ddd;
+    background: white;
+    outline: none;
+  }
+}
+
+.sectionInput {
+  font-size: 1.17em;
+  font-weight: bold;
 }

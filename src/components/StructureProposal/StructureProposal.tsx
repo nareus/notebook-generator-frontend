@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   NotebookStructure, 
   NotebookSection, 
@@ -17,42 +17,63 @@ export const StructureProposal: React.FC<StructureProposalProps> = ({
   onFeedback, 
   onConfirm 
 }) => {
-  const renderPage = (page: NotebookPage): React.ReactNode => (
-    <div key={page.title} className={styles.page}>
-      <h4>{page.title}</h4>
+  const [editableStructure, setEditableStructure] = useState(structure);
+
+  const handlePageTitleChange = (sectionIndex: number, pageIndex: number, newTitle: string) => {
+    const updatedStructure = { ...editableStructure };
+    updatedStructure.sections[sectionIndex].pages[pageIndex].title = newTitle;
+    setEditableStructure(updatedStructure);
+  };
+
+  const handleSectionNameChange = (sectionIndex: number, newName: string) => {
+    const updatedStructure = { ...editableStructure };
+    updatedStructure.sections[sectionIndex].name = newName;
+    setEditableStructure(updatedStructure);
+  };
+
+  const renderPage = (page: NotebookPage, sectionIndex: number, pageIndex: number) => (
+    <div key={pageIndex} className={styles.page}>
+      <input
+        type="text"
+        value={page.title}
+        onChange={(e) => handlePageTitleChange(sectionIndex, pageIndex, e.target.value)}
+        className={styles.titleInput}
+      />
       <span className={styles.pageType}>{page.type}</span>
-      {page.placeholders && page.placeholders.length > 0 && (
-        <div className={styles.placeholders}>
-          <small>Placeholders:</small>
-          <ul>
-            {page.placeholders.map(placeholder => (
-              <li key={placeholder}>{placeholder}</li>
-            ))}
-          </ul>
-        </div>
+      {page.placeholders?.length > 0 && (
+        <ul className={styles.placeholders}>
+          {page.placeholders.map((placeholder, index) => (
+            <li key={index}>{placeholder}</li>
+          ))}
+        </ul>
       )}
     </div>
   );
 
-  const renderSection = (section: NotebookSection, depth = 0): React.ReactNode => (
-    <div 
-      key={section.name} 
-      className={styles.section}
-      style={{ marginLeft: `${depth * 20}px` }}
-    >
-      <h3>{section.name}</h3>
+  const renderSection = (section: NotebookSection, sectionIndex: number) => (
+    <div key={sectionIndex} className={styles.section}>
+      <input
+        type="text"
+        value={section.name}
+        onChange={(e) => handleSectionNameChange(sectionIndex, e.target.value)}
+        className={styles.sectionInput}
+      />
       <div className={styles.sectionPages}>
-        {section.pages.map(renderPage)}
+        {section.pages.map((page, pageIndex) => 
+          renderPage(page, sectionIndex, pageIndex)
+        )}
       </div>
     </div>
   );
 
   return (
     <div className={styles.structureProposalContainer}>
-      <h2>{structure.notebook_name}</h2>
+      <h2>{editableStructure.notebook_name}</h2>
       <div className={styles.structureContent}>
         <h3>Proposed Notebook Structure</h3>
-        {structure.sections.map(renderSection)}
+        {editableStructure.sections.map((section, index) => 
+          renderSection(section, index)
+        )}
       </div>
       
       <div className={styles.feedbackSection}>
@@ -67,6 +88,12 @@ export const StructureProposal: React.FC<StructureProposalProps> = ({
           }}
         />
         <div className={styles.actionButtons}>
+          <button
+            onClick={() => onFeedback(JSON.stringify(editableStructure))}
+            className={styles.feedbackButton}
+          >
+            Update Structure
+          </button>
           <button 
             onClick={onConfirm}
             className={styles.confirmButton}
