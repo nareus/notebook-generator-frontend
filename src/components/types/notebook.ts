@@ -32,25 +32,33 @@ export interface FeedbackRequest {
   feedback: string
 }
 
+export interface NotebookResponse {
+  notebook_path: string;
+  voila_url: string;
+}
+
 export class NotebookStructureClient {
   private static generate_structure_url = 'http://0.0.0.0:8000/generate_structure';
   private static generate_feedback_structure_url = 'http://0.0.0.0:8000/generate_feedback_structure';
-  private static generate_topics_url = 'http://0.0.0.0:8000/generate_topics';
+  private static generate_topics_url = 'http://localhost:8000/generate_topics';
   private static generate_feedback_topics_url = 'http://0.0.0.0:8000/generate_feedback_topics';
+  private static generate_notebook_url = 'http://0.0.0.0:8000/generate_notebook';
 
   static async generateTopics(topic: string, notebook_count: number): Promise<TopicResponse> {
+    console.log("topic :",  topic, notebook_count, notebook_count)
     try {
       const response = await axios.post<TopicResponse>(
         this.generate_topics_url,
-        { topic, notebook_count },
+        {
+          "topic": topic, 
+          "notebook_count" : notebook_count
+        },
         {
           headers: {
             'Content-Type': 'application/json',
           },
         }
       );
-      console.log('Response from server:', response.data);
-
       return response.data;
     } catch (error) {
       console.error('Error generating notebook topics:', error);
@@ -115,6 +123,25 @@ export class NotebookStructureClient {
       return response.data;
     } catch (error) {
       console.error('Error generating notebook structure:', error);
+      throw error;
+    }
+  }
+
+  static async generateNotebook(structure: NotebookStructure): Promise<NotebookResponse> {
+    try {
+      const response = await axios.post<NotebookResponse>(
+        this.generate_notebook_url,
+        { structure },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Notebook generation response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error generating notebook:', error);
       throw error;
     }
   }

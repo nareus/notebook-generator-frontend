@@ -9,18 +9,21 @@ import styles from './Chat.module.scss';
 import { TopicsProposal } from '../TopicsProposal/TopicsProposal';
 
 export const Chat: React.FC = () => {
-  const [proposedTopics, setProposedTopics] = useState<string[]>([]);
+  // Boolean state to track if notebook generation has been completed
+  const [proposedTopics, setProposedTopics] = useState<[string, boolean][]>([]);
+  const [indexToGenerate, setIndexToGenerate] = useState<number>(0);
   const [proposedStructure, setProposedStructure] = useState<NotebookStructure | null>(null);
   const [generationStatus, setGenerationStatus] = useState<'idle' | 'loading-topics' | 'loading-structure' | 'structure-proposed' | 'topics-proposed' | 'generating' | 'completed' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
+
 
   const generateNotebookTopics = async (topic: string, notebookCount: number) => {
     try {
       setGenerationStatus('loading-topics');
 
       const response = await NotebookStructureClient.generateTopics(topic, notebookCount);
-
-      setProposedTopics(response.topics);
+      
+      setProposedTopics(response.topics.map(str => [str, false]));
       setGenerationStatus('topics-proposed');
     } catch (err) {
       console.error('Topic generation error:', err);
@@ -28,6 +31,7 @@ export const Chat: React.FC = () => {
       setGenerationStatus('error');
     }
   };
+
   const handleTopicsFeedback = async (feedback: string) => {
     try {
       setGenerationStatus('loading-topics');
@@ -37,20 +41,19 @@ export const Chat: React.FC = () => {
         feedback
       );
       
-      setProposedTopics(response.topics);
+      setProposedTopics(response.topics.map(str => [str, false]));
       setGenerationStatus('topics-proposed');
     } catch (err) {
       console.error('Structure generation error:', err);
       setError('Failed to generate notebook topics after feedback');
       setGenerationStatus('error');
     }
-
   };
   
   const generateStructure = async () => {
     try {
       setGenerationStatus('loading-structure');
-      const topicInput = proposedTopics[0];
+      const topicInput = proposedTopics[indexToGenerate][0];
   
       const response = await NotebookStructureClient.generateStructure(topicInput);
       
@@ -81,21 +84,28 @@ export const Chat: React.FC = () => {
     }
 
   };
+  // to be implemented
 
   const generateNotebook = async () => {
-    try {
-      setGenerationStatus('generating');
-      
-      // TODO: Implement actual notebook generation API call
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulated delay
-      
-      setGenerationStatus('completed');
-    } catch (err) {
-      console.error('Notebook generation error:', err);
-      setError('Failed to generate notebook');
-      setGenerationStatus('error');
-    }
+    const updatedTopics = [...proposedTopics];
+    updatedTopics[indexToGenerate] = [updatedTopics[indexToGenerate][0], true];
+    setIndexToGenerate(indexToGenerate + 1);
+    setProposedTopics(updatedTopics);
+    setGenerationStatus('topics-proposed');
+    console.log('updated topics', proposedTopics);
+  //   try {
+  //     setGenerationStatus('generating');
+  //     if (proposedStructure) {
+  //       const response = await NotebookStructureClient.generateNotebook(proposedStructure);
+  //       setGenerationStatus('completed');
+  //     }
+  //   } catch (err) {
+  //     console.error('Notebook generation error:', err);
+  //     setError('Failed to generate notebook');
+  //     setGenerationStatus('error');
+  //   }
   };
+
 
   const renderContent = () => {
     switch(generationStatus) {
@@ -121,6 +131,7 @@ export const Chat: React.FC = () => {
           <TopicsProposal 
             topics={proposedTopics}
             onFeedback={handleTopicsFeedback}
+            setProposedTopics={setProposedTopics}
             onConfirm={generateStructure}
           />
         ) : null;
@@ -142,13 +153,12 @@ export const Chat: React.FC = () => {
           </div>
         );
       
-      case 'completed':
-        return (
-          <div className={styles.statusContainer}>
-            <p>Notebook generated successfully!</p>
-            {/* TODO: Add download or preview button */}
-          </div>
-        );
+        case 'completed':
+          return (
+            <div className={styles.statusContainer}>
+              <p>Notebook generated successfully!</p>
+            </div>
+          );
       
       case 'error':
         return (

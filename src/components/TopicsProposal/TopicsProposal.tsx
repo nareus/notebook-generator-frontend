@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import styles from './TopicsProposal.module.scss';
 
 interface TopicsProposalProps {
-    topics: string[];
+    topics: [string, boolean][];
+    setProposedTopics: React.Dispatch<React.SetStateAction<[string, boolean][]>>;
     onFeedback: (feedback: string) => void;
     onConfirm: () => void;
   }
@@ -10,27 +10,28 @@ interface TopicsProposalProps {
   export const TopicsProposal: React.FC<TopicsProposalProps> = ({ 
     topics, 
     onFeedback, 
+    setProposedTopics,
     onConfirm 
   }) => {
-    const [editableTopics, setEditableTopics] = useState<string[]>(topics);
   
     const handleTopicChange = (index: number, newValue: string) => {
-      const updatedTopics = [...editableTopics];
-      updatedTopics[index] = newValue;
-      setEditableTopics(updatedTopics);
+      const updatedTopics = [...topics];
+      updatedTopics[index] = [newValue, updatedTopics[index][1]];
+      setProposedTopics(updatedTopics);
     };
   
     return (
       <div className={styles.topicsProposalContainer}>
         <h3>Suggested Topics</h3>
         <div className={styles.topicsList}>
-          {editableTopics.map((topic, index) => (
-            <div key={index} className={styles.topicItem}>
+          {topics.map(([topic, isCompleted], index) => (
+            <div key={index} className={`${styles.topicItem} ${isCompleted ? styles.completed : ''}`}>
               <input
                 type="text"
                 value={topic}
                 onChange={(e) => handleTopicChange(index, e.target.value)}
                 className={styles.topicInput}
+                disabled={isCompleted}
               />
             </div>
           ))}
@@ -49,7 +50,7 @@ interface TopicsProposalProps {
           />
           <div className={styles.actionButtons}>
             <button
-              onClick={() => onFeedback(editableTopics.join('\n'))}
+              onClick={() => onFeedback(topics.map(tuple => tuple[0]).join('\n'))}
               className={styles.feedbackButton}
             >
               Update Topics

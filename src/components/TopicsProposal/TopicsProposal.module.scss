@@ -21,6 +21,26 @@
 .topicItem {
   display: flex;
   align-items: center;
+  &.completed {
+    .topicInput {
+      background-color: #f0f8ff;
+      border-color: #90cdf4;
+      color: #2c5282;
+      cursor: not-allowed;
+
+      &:focus {
+        box-shadow: none;
+        border-color: #90cdf4;
+      }
+    }
+
+    &::after {
+      content: "✓";
+      color: #38a169;
+      margin-left: 8px;
+      font-weight: bold;
+    }
+  }
 }
 
 .topicInput {
