@@ -30,26 +30,62 @@ export const StructureProposal: React.FC<StructureProposalProps> = ({
     updatedStructure.sections[sectionIndex].name = newName;
     setEditableStructure(updatedStructure);
   };
+  
+  const handlePageTypeChange = (sectionIndex: number, pageIndex: number, newType: string) => {
+    const updatedStructure = { ...editableStructure };
+    updatedStructure.sections[sectionIndex].pages[pageIndex].type = newType;
+    setEditableStructure(updatedStructure);
+  };
+
+  const handlePlaceholderChange = (sectionIndex: number, pageIndex: number, placeholderIndex: number, newValue: string) => {
+    const updatedStructure = { ...editableStructure };
+    if (updatedStructure.sections[sectionIndex].pages[pageIndex].placeholders) {
+      updatedStructure.sections[sectionIndex].pages[pageIndex].placeholders[placeholderIndex] = newValue;
+      setEditableStructure(updatedStructure);
+  }
+  };
 
   const renderPage = (page: NotebookPage, sectionIndex: number, pageIndex: number) => (
     <div key={pageIndex} className={styles.page}>
-      <input
-        type="text"
-        value={page.title}
-        onChange={(e) => handlePageTitleChange(sectionIndex, pageIndex, e.target.value)}
-        className={styles.titleInput}
-      />
-      <span className={styles.pageType}>{page.type}</span>
-      {page.placeholders?.length > 0 && (
-        <ul className={styles.placeholders}>
-          {page.placeholders.map((placeholder, index) => (
-            <li key={index}>{placeholder}</li>
-          ))}
-        </ul>
-      )}
+      <div className={styles.pageContent}>
+        <div>
+          Cell Title   
+        </div>
+        <input
+          type="text"
+          value={page.title}
+          onChange={(e) => handlePageTitleChange(sectionIndex, pageIndex, e.target.value)}
+          className={styles.titleInput}
+        />
+        <div>
+          Cell Type    
+        </div>
+        <input
+          type="text"
+          value={page.type}
+          onChange={(e) => handlePageTypeChange(sectionIndex, pageIndex, e.target.value)}
+          className={styles.pageType}
+        />
+        <div>
+          Content
+        </div>
+        {page.placeholders?.length > 0 && (
+          <ul className={styles.placeholders}>
+            {page.placeholders?.map((placeholder, index) => (
+              <li key={index} className={styles.placeholders}>
+                <input
+                  type="text"
+                  value={placeholder}
+                  onChange={(e) => handlePlaceholderChange(sectionIndex, pageIndex, index, e.target.value)}
+                  className={styles.placeholderInput}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
-
   const renderSection = (section: NotebookSection, sectionIndex: number) => (
     <div key={sectionIndex} className={styles.section}>
       <input

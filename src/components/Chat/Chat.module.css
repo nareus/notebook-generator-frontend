@@ -1,5 +1,4 @@
 .notebookGeneratorContainer {
-  max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
   background-color: #f4f6f9;
@@ -74,7 +73,7 @@
   color: #7f8c8d;
   margin-top: 0.25rem;
 }
-@media (max-width: 600px) {
+@media (max-width: 300px) {
   .notebookGeneratorContainer {
     padding: 1rem;
   }

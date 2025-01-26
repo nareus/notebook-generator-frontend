@@ -1,9 +1,7 @@
 // components/StructureProposal.module.scss
 .structureProposalContainer {
-  max-width: 800px;
-  min-width: 400px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 2rem;
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
@@ -26,27 +24,43 @@
     overflow-y: auto;
 
     .section {
-      margin-bottom: 1rem;
-      padding: 0.75rem;
-      background-color: white;
-      border-left: 4px solid #4a90e2;
-      transition: all 0.3s ease;
-
-      h3 {
-        margin: 0 0 0.5rem 0;
-        color: #2c3e50;
-        font-size: 1.1rem;
-      }
-
-      p {
-        color: #7f8c8d;
-        margin: 0;
-        font-size: 0.9rem;
-      }
+      width: 100%;
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
 
       &:hover {
-        background-color: #f0f6ff;
-        transform: translateX(5px);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .sectionInput {
+        width: 400px;
+        padding: 12px;
+        margin-bottom: 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        transition: all 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #0070f3;
+          box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
+        }
+      }
+
+      .sectionPages {
+        margin-left: 16px;
+        padding: 16px;
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        border-left: 3px solid #0070f3;
       }
     }
   }
@@ -115,26 +129,84 @@
       }
     }
   }
+}
 
-  .titleInput,
-  .sectionInput {
-    border: 1px solid transparent;
-    background: transparent;
-    font-size: inherit;
-    font-weight: inherit;
-    width: 100%;
-    padding: 4px;
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
 
-    &:hover,
+  &:hover {
+    border-color: #0070f3;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .titleInput {
+    width: 600px;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+
     &:focus {
-      border-color: #ddd;
-      background: white;
       outline: none;
+      border-color: #0070f3;
+      box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
     }
   }
 
-  .sectionInput {
-    font-size: 1.17em;
-    font-weight: bold;
+  .pageContent {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .pageType {
+    width: 200px;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #f0f8ff;
+    color: #2c5282;
+    transition: all 0.2s ease;
+    text-align: center;
+
+    &:focus {
+      outline: none;
+      border-color: #0070f3;
+      box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
+    }
+  }
+
+  .placeholders {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .placeholderInput {
+    width: 80%;
+    padding: 6px 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    margin-bottom: 5px;
+
+    &:focus {
+      outline: none;
+      border-color: #0070f3;
+      box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
+    }
   }
 }

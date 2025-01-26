@@ -1,5 +1,4 @@
 .notebookGeneratorContainer {
-  max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
   background-color: #f4f6f9;
@@ -87,7 +86,7 @@
     }
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 300px) {
     padding: 1rem;
 
     .statusContainer {

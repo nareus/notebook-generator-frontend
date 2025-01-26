@@ -6,7 +6,7 @@ export interface PagePlaceholder {
   
 export interface NotebookPage {
   title: string;
-  type: 'text' | 'code' | 'markdown' | 'chart';
+  type: string;
   placeholders?: string[];
   content?: string;
 }
