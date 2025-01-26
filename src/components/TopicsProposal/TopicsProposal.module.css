@@ -1,14 +1,14 @@
+@charset "UTF-8";
 .topicsProposalContainer {
   padding: 20px;
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  h3 {
-    margin-bottom: 16px;
-    color: #333;
-    font-size: 1.2rem;
-  }
+}
+.topicsProposalContainer h3 {
+  margin-bottom: 16px;
+  color: #333;
+  font-size: 1.2rem;
 }
 
 .topicsList {
@@ -18,37 +18,31 @@
   margin-bottom: 24px;
 }
 
-.deleteIcon {
-  &:hover {
-    cursor: pointer;
-    color: red;
-    transition: color 0.2s ease;
-  }
+.deleteIcon:hover {
+  cursor: pointer;
+  color: red;
+  transition: color 0.2s ease;
 }
 
 .topicItem {
   display: flex;
   align-items: center;
-  &.completed {
-    .topicInput {
-      background-color: #f0f8ff;
-      border-color: #90cdf4;
-      color: #2c5282;
-      cursor: not-allowed;
-
-      &:focus {
-        box-shadow: none;
-        border-color: #90cdf4;
-      }
-    }
-
-    &::after {
-      content: "✓";
-      color: #38a169;
-      margin-left: 8px;
-      font-weight: bold;
-    }
-  }
+}
+.topicItem.completed .topicInput {
+  background-color: #f0f8ff;
+  border-color: #90cdf4;
+  color: #2c5282;
+  cursor: not-allowed;
+}
+.topicItem.completed .topicInput:focus {
+  box-shadow: none;
+  border-color: #90cdf4;
+}
+.topicItem.completed::after {
+  content: "✓";
+  color: #38a169;
+  margin-left: 8px;
+  font-weight: bold;
 }
 
 .topicInput {
@@ -58,22 +52,21 @@
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.2s ease;
-
-  &:focus {
-    outline: none;
-    border-color: #0070f3;
-    box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
-  }
+}
+.topicInput:focus {
+  outline: none;
+  border-color: #0070f3;
+  box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
 }
 
 .addIcon {
   cursor: pointer;
   display: block;
   margin: 0 auto;
-  &:hover {
-    color: #0070f3;
-    transition: color 0.2s ease;
-  }
+}
+.addIcon:hover {
+  color: #0070f3;
+  transition: color 0.2s ease;
 }
 
 .feedbackSection {
@@ -88,12 +81,11 @@
   border-radius: 4px;
   resize: vertical;
   margin-bottom: 16px;
-
-  &:focus {
-    outline: none;
-    border-color: #0070f3;
-    box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
-  }
+}
+.feedbackInput:focus {
+  outline: none;
+  border-color: #0070f3;
+  box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
 }
 
 .actionButtons {
@@ -115,18 +107,16 @@
   background-color: #ffffff;
   border: 1px solid #0070f3;
   color: #0070f3;
-
-  &:hover {
-    background-color: #f5f5f5;
-  }
+}
+.feedbackButton:hover {
+  background-color: #f5f5f5;
 }
 
 .confirmButton {
   background-color: #0070f3;
   border: 1px solid #0070f3;
   color: #ffffff;
-
-  &:hover {
-    background-color: #0060df;
-  }
 }
+.confirmButton:hover {
+  background-color: #0060df;
+}/*# sourceMappingURL=TopicsProposal.module.css.map */

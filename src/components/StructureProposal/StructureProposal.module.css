@@ -1,0 +1,122 @@
+.structureProposalContainer {
+  max-width: 800px;
+  min-width: 400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+.structureProposalContainer h2 {
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 1rem;
+}
+.structureProposalContainer .structureContent {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.structureProposalContainer .structureContent .section {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: white;
+  border-left: 4px solid #4a90e2;
+  transition: all 0.3s ease;
+}
+.structureProposalContainer .structureContent .section h3 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+.structureProposalContainer .structureContent .section p {
+  color: #7f8c8d;
+  margin: 0;
+  font-size: 0.9rem;
+}
+.structureProposalContainer .structureContent .section:hover {
+  background-color: #f0f6ff;
+  transform: translateX(5px);
+}
+.structureProposalContainer .feedbackSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.structureProposalContainer .feedbackSection .feedbackInput {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+.structureProposalContainer .feedbackSection .feedbackInput:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+.structureProposalContainer .feedbackSection .actionButtons {
+  display: flex;
+  justify-content: flex-end;
+}
+.structureProposalContainer .feedbackSection .actionButtons .feedbackButton,
+.structureProposalContainer .feedbackSection .actionButtons .confirmButton {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.structureProposalContainer .feedbackSection .actionButtons .feedbackButton {
+  background-color: #ffffff;
+  border: 1px solid #0070f3;
+  color: #0070f3;
+}
+.structureProposalContainer .feedbackSection .actionButtons .feedbackButton:hover {
+  background-color: #f5f5f5;
+}
+.structureProposalContainer .feedbackSection .actionButtons .confirmButton {
+  background-color: #0070f3;
+  border: 1px solid #0070f3;
+  color: #ffffff;
+}
+.structureProposalContainer .feedbackSection .actionButtons .confirmButton:hover {
+  background-color: #0060df;
+}
+@media (max-width: 600px) {
+  .structureProposalContainer .feedbackSection {
+    padding: 1rem;
+  }
+  .structureProposalContainer .feedbackSection .structureContent {
+    max-height: 300px;
+  }
+}
+.structureProposalContainer .titleInput,
+.structureProposalContainer .sectionInput {
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: inherit;
+  font-weight: inherit;
+  width: 100%;
+  padding: 4px;
+}
+.structureProposalContainer .titleInput:hover, .structureProposalContainer .titleInput:focus,
+.structureProposalContainer .sectionInput:hover,
+.structureProposalContainer .sectionInput:focus {
+  border-color: #ddd;
+  background: white;
+  outline: none;
+}
+.structureProposalContainer .sectionInput {
+  font-size: 1.17em;
+  font-weight: bold;
+}/*# sourceMappingURL=StructureProposal.module.css.map */

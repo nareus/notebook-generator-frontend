@@ -1,4 +1,6 @@
 import styles from './TopicsProposal.module.scss';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 interface TopicsProposalProps {
     topics: [string, boolean][];
@@ -19,6 +21,13 @@ interface TopicsProposalProps {
       updatedTopics[index] = [newValue, updatedTopics[index][1]];
       setProposedTopics(updatedTopics);
     };
+
+    const handleTopicDelete = (index: number) => {
+      const updatedTopics = [...topics];
+      updatedTopics.splice(index, 1);
+      setProposedTopics(updatedTopics);
+    };
+
   
     return (
       <div className={styles.topicsProposalContainer}>
@@ -26,6 +35,7 @@ interface TopicsProposalProps {
         <div className={styles.topicsList}>
           {topics.map(([topic, isCompleted], index) => (
             <div key={index} className={`${styles.topicItem} ${isCompleted ? styles.completed : ''}`}>
+              <DeleteIcon className={styles.deleteIcon} onClick={() => handleTopicDelete(index)} />
               <input
                 type="text"
                 value={topic}
@@ -35,6 +45,7 @@ interface TopicsProposalProps {
               />
             </div>
           ))}
+          <AddCircleIcon className={styles.addIcon} onClick={() => setProposedTopics([...topics, ['', false]])} />
         </div>
   
         <div className={styles.feedbackSection}>

@@ -1,0 +1,76 @@
+.topicInputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.topicInputContainer .topicInput {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+.topicInputContainer .topicInput:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+.topicInputContainer .topicInput::-moz-placeholder {
+  color: #a0a0a0;
+}
+.topicInputContainer .topicInput::placeholder {
+  color: #a0a0a0;
+}
+.topicInputContainer .countInput {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+.topicInputContainer .countInput:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+.topicInputContainer .countInput::-moz-placeholder {
+  color: #a0a0a0;
+}
+.topicInputContainer .countInput::placeholder {
+  color: #a0a0a0;
+}
+.topicInputContainer .submitButton {
+  align-self: flex-start;
+  padding: 0.75rem 1.5rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.topicInputContainer .submitButton:hover {
+  background-color: #2275d7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.topicInputContainer .submitButton:disabled {
+  background-color: #c0c0c0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+@media (max-width: 600px) {
+  .topicInputContainer {
+    padding: 1rem 0.5rem;
+  }
+}/*# sourceMappingURL=TopicInput.module.css.map */
