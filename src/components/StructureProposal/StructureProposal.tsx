@@ -58,31 +58,30 @@ export const StructureProposal: React.FC<StructureProposalProps> = ({
           className={styles.titleInput}
         />
         <div>
-          Cell Type    
+          Cell Type and Content    
         </div>
-        <input
-          type="text"
-          value={page.type}
-          onChange={(e) => handlePageTypeChange(sectionIndex, pageIndex, e.target.value)}
-          className={styles.pageType}
-        />
-        <div>
-          Content
+        <div className={styles.pageTypeAndPlaceholders}>
+          <input
+            type="text"
+            value={page.type}
+            onChange={(e) => handlePageTypeChange(sectionIndex, pageIndex, e.target.value)}
+            className={styles.pageType}
+          />
+          {page.placeholders?.length > 0 && (
+            <ul className={styles.placeholders}>
+              {page.placeholders?.map((placeholder, index) => (
+                <li key={index} className={styles.placeholders}>
+                  <input
+                    type="text"
+                    value={placeholder}
+                    onChange={(e) => handlePlaceholderChange(sectionIndex, pageIndex, index, e.target.value)}
+                    className={styles.placeholderInput}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-        {page.placeholders?.length > 0 && (
-          <ul className={styles.placeholders}>
-            {page.placeholders?.map((placeholder, index) => (
-              <li key={index} className={styles.placeholders}>
-                <input
-                  type="text"
-                  value={placeholder}
-                  onChange={(e) => handlePlaceholderChange(sectionIndex, pageIndex, index, e.target.value)}
-                  className={styles.placeholderInput}
-                />
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </div>
   );

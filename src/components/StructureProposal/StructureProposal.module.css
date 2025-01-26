@@ -51,7 +51,6 @@
   box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
 }
 .structureProposalContainer .structureContent .section .sectionPages {
-  margin-left: 16px;
   padding: 16px;
   background-color: #f8f9fa;
   border-radius: 6px;
@@ -118,7 +117,6 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
   padding: 12px;
   background-color: #ffffff;
   border-radius: 4px;
@@ -149,9 +147,16 @@
   gap: 8px;
   width: 100%;
 }
+.page .pageTypeAndPlaceholders {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex: 1;
+  align-items: center;
+}
 .page .pageType {
+  height: 30px;
   width: 200px;
-  padding: 8px 12px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   font-size: 0.9rem;
@@ -159,6 +164,7 @@
   color: #2c5282;
   transition: all 0.2s ease;
   text-align: center;
+  margin-right: 5px;
 }
 .page .pageType:focus {
   outline: none;
@@ -166,12 +172,14 @@
   box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
 }
 .page .placeholders {
+  flex-direction: row;
+  flex: 1;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 .page .placeholderInput {
-  width: 80%;
+  width: 100%;
   padding: 6px 10px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
