@@ -19,6 +19,46 @@ export const StructureProposal: React.FC<StructureProposalProps> = ({
 }) => {
   const [editableStructure, setEditableStructure] = useState(structure);
 
+  const handleAddSection = () => {
+    const newSection: NotebookSection = {
+      name: 'New Section',
+      pages: [{
+        'title': 'New Page',
+        'type': 'text',
+        'placeholders': ['add content'],
+      }]
+    };
+    
+    setEditableStructure(prev => ({
+      ...prev,
+      sections: [...prev.sections, newSection]
+    }));
+  };
+
+  const handleDeleteSection = (sectionIndex: number) => {
+    const updatedStructure = { ...editableStructure };
+    updatedStructure.sections.splice(sectionIndex, 1);
+    setEditableStructure(updatedStructure);
+  };
+
+  const handleAddPage = (sectionIndex: number) => {
+    const newPage: NotebookPage = {
+      'title': 'New Page',
+      'type': 'text',
+      'placeholders': ['add content'],
+    };
+
+    const updatedStructure = { ...editableStructure };
+    updatedStructure.sections[sectionIndex].pages.push(newPage);
+    setEditableStructure(updatedStructure);
+  };
+
+  const handleAddPagePlaceholder = (sectionIndex: number, pageIndex: number) => {
+    const updatedStructure = { ...editableStructure };
+    updatedStructure.sections[sectionIndex].pages[pageIndex].placeholders.push('add content');
+    setEditableStructure(updatedStructure);
+  };
+
   const handlePageTitleChange = (sectionIndex: number, pageIndex: number, newTitle: string) => {
     const updatedStructure = { ...editableStructure };
     updatedStructure.sections[sectionIndex].pages[pageIndex].title = newTitle;
@@ -81,24 +121,36 @@ export const StructureProposal: React.FC<StructureProposalProps> = ({
               ))}
             </ul>
           )}
+          <button 
+            onClick={() => handleAddPagePlaceholder(sectionIndex, pageIndex)}
+            className={styles.addSectionButton}
+          >
+            Add Content Pointers
+          </button>
         </div>
       </div>
     </div>
   );
   const renderSection = (section: NotebookSection, sectionIndex: number) => (
     <div key={sectionIndex} className={styles.section}>
-      <input
-        type="text"
-        value={section.name}
-        onChange={(e) => handleSectionNameChange(sectionIndex, e.target.value)}
-        className={styles.sectionInput}
-      />
-      <div className={styles.sectionPages}>
-        {section.pages.map((page, pageIndex) => 
-          renderPage(page, sectionIndex, pageIndex)
-        )}
-      </div>
-    </div>
+          <input
+            type="text"
+            value={section.name}
+            onChange={(e) => handleSectionNameChange(sectionIndex, e.target.value)}
+            className={styles.sectionInput}
+          />
+          <div className={styles.sectionPages}>
+            {section.pages.map((page, pageIndex) => 
+              renderPage(page, sectionIndex, pageIndex)
+            )}
+          </div>
+          <button 
+          onClick={() => handleAddPage(sectionIndex)}
+          className={styles.addSectionButton}
+        >
+          Add New Page
+        </button>
+        </div>
   );
 
   return (
@@ -106,9 +158,15 @@ export const StructureProposal: React.FC<StructureProposalProps> = ({
       <h2>{editableStructure.notebook_name}</h2>
       <div className={styles.structureContent}>
         <h3>Proposed Notebook Structure</h3>
-        {editableStructure.sections.map((section, index) => 
-          renderSection(section, index)
-        )}
+                {editableStructure.sections.map((section, index) => 
+                  renderSection(section, index)
+                )}
+        <button 
+          onClick={handleAddSection}
+          className={styles.addSectionButton}
+        >
+          Add New Section
+        </button>
       </div>
       
       <div className={styles.feedbackSection}>
