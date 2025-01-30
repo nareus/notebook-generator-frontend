@@ -12,11 +12,7 @@ interface StructureProposalProps {
   onConfirm: () => void;
 }
 
-export const StructureProposal: React.FC<StructureProposalProps> = ({ 
-  structure, 
-  onFeedback, 
-  onConfirm 
-}) => {
+export const StructureProposal = ({ structure, onFeedback, onConfirm }: StructureProposalProps) => {
   const [editableStructure, setEditableStructure] = useState(structure);
 
   const handleAddSection = () => {

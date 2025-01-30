@@ -33,8 +33,7 @@ export interface FeedbackRequest {
 }
 
 export interface NotebookResponse {
-  notebook_path: string;
-  voila_url: string;
+  notebook: string;
 }
 
 export class NotebookStructureClient {
@@ -131,7 +130,9 @@ export class NotebookStructureClient {
     try {
       const response = await axios.post<NotebookResponse>(
         this.generate_notebook_url,
-        { structure },
+        { 
+          'structure' : structure 
+        },
         {
           headers: {
             'Content-Type': 'application/json',

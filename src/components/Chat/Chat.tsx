@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { 
+  NotebookResponse,
   NotebookStructure, 
   NotebookStructureClient
 } from '../types/notebook';
@@ -7,14 +8,30 @@ import { TopicInput } from '../TopicInput/TopicInput';
 import { StructureProposal } from '../StructureProposal/StructureProposal';
 import styles from './Chat.module.scss';
 import { TopicsProposal } from '../TopicsProposal/TopicsProposal';
+import { DownloadNotebook } from '../DownloadNotebook/DownloadNotebook';
 
-export const Chat: React.FC = () => {
+
+export const Chat = () => {
   // Boolean state to track if notebook generation has been completed
   const [proposedTopics, setProposedTopics] = useState<[string, boolean][]>([]);
   const [indexToGenerate, setIndexToGenerate] = useState<number>(0);
-  const [proposedStructure, setProposedStructure] = useState<NotebookStructure | null>(null);
   const [generationStatus, setGenerationStatus] = useState<'idle' | 'loading-topics' | 'loading-structure' | 'structure-proposed' | 'topics-proposed' | 'generating' | 'completed' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [proposedStructure, setProposedStructure] = useState<NotebookStructure>({
+    notebook_name: '',
+    sections: [
+      {
+        name: '',
+        pages: [
+          {
+            title: '',
+            type: '',
+            placeholders: ['']
+          }
+        ]
+      }
+    ]
+  });
 
 
   const generateNotebookTopics = async (topic: string, notebookCount: number) => {
@@ -84,28 +101,33 @@ export const Chat: React.FC = () => {
     }
 
   };
-  // to be implemented
 
-  const generateNotebook = async () => {
-    const updatedTopics = [...proposedTopics];
-    updatedTopics[indexToGenerate] = [updatedTopics[indexToGenerate][0], true];
-    setIndexToGenerate(indexToGenerate + 1);
-    setProposedTopics(updatedTopics);
-    setGenerationStatus('topics-proposed');
-    console.log('updated topics', proposedTopics);
-  //   try {
-  //     setGenerationStatus('generating');
-  //     if (proposedStructure) {
-  //       const response = await NotebookStructureClient.generateNotebook(proposedStructure);
-  //       setGenerationStatus('completed');
-  //     }
-  //   } catch (err) {
-  //     console.error('Notebook generation error:', err);
-  //     setError('Failed to generate notebook');
-  //     setGenerationStatus('error');
-  //   }
+  const handledownloadNotebook = async () => {
+    try {
+      setGenerationStatus('loading-structure');
+      const notebook : NotebookResponse = await NotebookStructureClient.generateNotebook(proposedStructure)
+
+      // Create a Blob from the notebook content
+      const blob = new Blob([notebook.notebook], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      
+      // Create a temporary link and trigger download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'generated_notebook.ipynb';
+      document.body.appendChild(a);
+      a.click();
+      
+      // Cleanup
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      setIndexToGenerate(indexToGenerate + 1)
+    } catch (error) {
+      console.error('Error generating notebook:', error);
+      alert('Failed to generate notebook');
+    }
   };
-
 
   const renderContent = () => {
     switch(generationStatus) {
@@ -137,11 +159,11 @@ export const Chat: React.FC = () => {
         ) : null;
       
       case 'structure-proposed':
-        return proposedStructure ? (
+        return proposedStructure && 'notebook_name' in proposedStructure && 'sections' in proposedStructure ? (
           <StructureProposal 
             structure={proposedStructure}
             onFeedback={handleStructureFeedback}
-            onConfirm={generateNotebook}
+            onConfirm={() => setGenerationStatus('completed')}
           />
         ) : null;
       
@@ -155,8 +177,13 @@ export const Chat: React.FC = () => {
       
         case 'completed':
           return (
+            <div>
             <div className={styles.statusContainer}>
               <p>Notebook generated successfully!</p>
+            </div>
+            {proposedStructure && 'notebook_name' in proposedStructure && 'sections' in proposedStructure && (
+              <DownloadNotebook downloadNotebook={handledownloadNotebook}  />
+            )}
             </div>
           );
       
@@ -168,7 +195,6 @@ export const Chat: React.FC = () => {
         );
     }
   };
-
   return (
     <div className={styles.notebookGeneratorContainer}>
       {renderContent()}

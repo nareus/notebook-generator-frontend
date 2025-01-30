@@ -5,7 +5,7 @@ interface TopicInputProps {
   onTopicSubmit: (topic: string, notebookCount: number) => void;
 }
 
-export const TopicInput: React.FC<TopicInputProps> = ({ onTopicSubmit }) => {
+export const TopicInput = ({ onTopicSubmit }: TopicInputProps) => {
   const [topic, setTopic] = useState<string>('');
   const [notebookCount, setNotebookCount] = useState<number>(1);
 
@@ -42,7 +42,7 @@ export const TopicInput: React.FC<TopicInputProps> = ({ onTopicSubmit }) => {
         disabled={!topic.trim()}
         className={styles.submitButton}
       >
-        Generate Structure
+        Generate Notebook Topics
       </button>
     </form>
   );

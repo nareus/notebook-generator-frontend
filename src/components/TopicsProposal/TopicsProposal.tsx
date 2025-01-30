@@ -9,12 +9,12 @@ interface TopicsProposalProps {
     onConfirm: () => void;
   }
   
-  export const TopicsProposal: React.FC<TopicsProposalProps> = ({ 
+  export const TopicsProposal = ({ 
     topics, 
     onFeedback, 
     setProposedTopics,
     onConfirm 
-  }) => {
+  } : TopicsProposalProps) => {
   
     const handleTopicChange = (index: number, newValue: string) => {
       const updatedTopics = [...topics];
