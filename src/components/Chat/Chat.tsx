@@ -122,7 +122,11 @@ export const Chat = () => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      setIndexToGenerate(indexToGenerate + 1)
+      const updatedTopics = [...proposedTopics];
+      updatedTopics[indexToGenerate] = [updatedTopics[indexToGenerate][0], true];
+      setProposedTopics(updatedTopics);
+      setIndexToGenerate(indexToGenerate + 1);
+      setGenerationStatus('topics-proposed');
     } catch (error) {
       console.error('Error generating notebook:', error);
       alert('Failed to generate notebook');
