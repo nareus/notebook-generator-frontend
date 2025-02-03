@@ -99,12 +99,11 @@ export const Chat = () => {
       setError('Failed to generate notebook structure');
       setGenerationStatus('error');
     }
-
   };
 
   const handledownloadNotebook = async () => {
     try {
-      setGenerationStatus('loading-structure');
+      setGenerationStatus('generating');
       const notebook : NotebookResponse = await NotebookStructureClient.generateNotebook(proposedStructure)
 
       // Create a Blob from the notebook content
@@ -142,7 +141,7 @@ export const Chat = () => {
         return (
           <div className={styles.statusContainer}>
             <div className={styles.loadingSpinner}></div>
-            <p>Generating notebook topic...</p>
+            <p>Generating notebook topics...</p>
           </div>
         );
       case 'loading-structure':
@@ -167,7 +166,7 @@ export const Chat = () => {
           <StructureProposal 
             structure={proposedStructure}
             onFeedback={handleStructureFeedback}
-            onConfirm={() => setGenerationStatus('completed')}
+            onConfirm={handledownloadNotebook}
           />
         ) : null;
       
