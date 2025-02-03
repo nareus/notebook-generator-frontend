@@ -18,19 +18,18 @@ export const StructureProposal = ({ structure, onFeedback, onConfirm, handleAddC
 handleCellChange}: StructureProposalProps) => {
 
   const renderCell = (cell: NotebookCell, cellIndex: number) => (
-    <div key={cellIndex} className={styles.page}>
-      <div className={styles.pageTypeAndPlaceholders}>
+    <div key={cellIndex} className={styles.cell}>
+      <div className={styles.cellTypeAndContent}>
         <input
-          type="text"
           value={cell.type}
           onChange={(e) => handleCellTypeChange(cellIndex, e.target.value)}
-          className={styles.pageType}
+          className={styles.cellType}
         />
-        <input
-          type="text"
+        <textarea
           value={cell.content}
           onChange={(e) => handleCellChange(cellIndex, e.target.value)}
-          className={styles.placeholderInput}
+          className={styles.contentInput}
+          rows={3}
         />
       </div>
     </div>
@@ -41,43 +40,41 @@ handleCellChange}: StructureProposalProps) => {
       <h2>{structure.notebook_name}</h2>
       <div className={styles.structureContent}>
         <h3>Proposed Notebook Structure</h3>
-                {structure.cells.map((cell, index) => 
-                  renderCell(cell, index)
-                )}
+        {structure.cells.map((cell, index) => 
+          renderCell(cell, index)
+        )}
         <button 
           onClick={handleAddCell}
-          className={styles.addSectionButton}
+          className={styles.addCellButton}
         >
           Add New Cell
         </button>
-      </div>
-      
-      <div className={styles.feedbackSection}>
-        <textarea 
-          placeholder="Provide feedback on the structure (optional)"
-          className={styles.feedbackInput}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              onFeedback((e.target as HTMLTextAreaElement).value);
-            }
-          }}
-        />
-        <div className={styles.actionButtons}>
-          <button
-            onClick={() => onFeedback(JSON.stringify(structure))}
-            className={styles.feedbackButton}
-          >
-            Update Structure
-          </button>
-          <button 
-            onClick={onConfirm}
-            className={styles.confirmButton}
-          >
-            Confirm and Generate Notebook
-          </button>
+        <div className={styles.feedbackSection}>
+          <textarea 
+            placeholder="Provide feedback on the structure (optional)"
+            className={styles.feedbackInput}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                onFeedback((e.target as HTMLTextAreaElement).value);
+              }
+            }}
+          />
+          <div className={styles.actionButtons}>
+            <button
+              onClick={() => onFeedback(JSON.stringify(structure))}
+              className={styles.feedbackButton}
+            >
+              Update Structure
+            </button>
+            <button 
+              onClick={onConfirm}
+              className={styles.confirmButton}
+            >
+              Confirm and Generate Notebook
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
+      </div>    </div>
   );
 };

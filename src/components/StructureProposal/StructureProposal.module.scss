@@ -1,10 +1,11 @@
 // components/StructureProposal.module.scss
 .structureProposalContainer {
   margin: 0;
-  padding: 2rem;
+  padding: 1rem;
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  overflow-y: auto;
 
   h2 {
     color: #333;
@@ -20,50 +21,8 @@
     border-radius: 6px;
     padding: 1rem;
     margin-bottom: 1.5rem;
-    max-height: 400px;
-    overflow-y: auto;
 
-    .section {
-      width: 100%;
-      background-color: #ffffff;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      transition: all 0.2s ease;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-
-      .sectionInput {
-        width: 800px;
-        padding: 12px;
-        margin-bottom: 16px;
-        border: 1px solid #e0e0e0;
-        border-radius: 4px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #333;
-        transition: all 0.2s ease;
-
-        &:focus {
-          outline: none;
-          border-color: #0070f3;
-          box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
-        }
-      }
-
-      .sectionPages {
-        padding: 16px;
-        background-color: #f8f9fa;
-        border-radius: 6px;
-        border-left: 3px solid #0070f3;
-      }
-    }
-
-    .addSectionButton {
+    .addCellButton {
       margin-top: 20px;
       padding: 8px 16px;
       background-color: #007bff;
@@ -71,6 +30,7 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin-bottom: 20px;
 
       &:hover {
         background-color: #0056b3;
@@ -89,7 +49,7 @@
       padding: 0.75rem;
       border: 2px solid #e0e0e0;
       border-radius: 6px;
-      resize: vertical;
+      resize: none;
       font-size: 1rem;
       transition: all 0.3s ease;
 
@@ -144,7 +104,7 @@
   }
 }
 
-.page {
+.cell {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -160,46 +120,32 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  .titleInput {
-    width: 600px;
-    padding: 8px 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    font-size: 1rem;
-    transition: border-color 0.2s ease;
-
-    &:focus {
-      outline: none;
-      border-color: #0070f3;
-      box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
-    }
-  }
-  .pageContent {
+  .cellContent {
     display: flex;
     flex-direction: column;
     gap: 8px;
     width: 100%;
   }
 
-  .pageTypeAndPlaceholders {
+  .cellTypeAndContent {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 100%;
     flex: 1;
-    align-items: center;
+    align-items: flex-start;
   }
 
-  .pageType {
+  .cellType {
     height: 30px;
     width: 200px;
     border: 1px solid #e0e0e0;
+    text-align: center;
     border-radius: 4px;
     font-size: 0.9rem;
     background-color: #f0f8ff;
     color: #2c5282;
     transition: all 0.2s ease;
-    text-align: center;
-    margin-right: 5px;
+    margin-bottom: 20px;
 
     &:focus {
       outline: none;
@@ -208,16 +154,10 @@
     }
   }
 
-  .placeholders {
-    flex-direction: row;
-    flex: 1;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .placeholderInput {
+  .contentInput {
     width: 100%;
+    min-height: 60px;
+    height: auto;
     padding: 6px 10px;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
