@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { 
+  NotebookCell,
   NotebookResponse,
   NotebookStructure, 
   NotebookStructureClient
@@ -19,16 +20,10 @@ export const Chat = () => {
   const [error, setError] = useState<string | null>(null);
   const [proposedStructure, setProposedStructure] = useState<NotebookStructure>({
     notebook_name: '',
-    sections: [
+    cells: [
       {
-        name: '',
-        pages: [
-          {
-            title: '',
             type: '',
-            placeholders: ['']
-          }
-        ]
+            content: '',
       }
     ]
   });
@@ -101,6 +96,36 @@ export const Chat = () => {
     }
   };
 
+  const handleAddCell = () => {
+    const newCell: NotebookCell = {
+        'type': 'markdown',
+        'content': 'Add content or prompt to generate cell content',
+    };
+    
+    setProposedStructure(prev => ({
+      ...prev,
+      cells: [...prev.cells, newCell]
+    }));
+  };
+
+  // const handleDeleteSection = (sectionIndex: number) => {
+  //   const updatedStructure = { ...editableStructure };
+  //   updatedStructure.sections.splice(sectionIndex, 1);
+  //   setEditableStructure(updatedStructure);
+  // }; 
+
+  const handleCellTypeChange = (cellIndex: number, newValue: string) => {
+    const updatedStructure = { ...proposedStructure };
+    updatedStructure.cells[cellIndex].type = newValue;
+    setProposedStructure(updatedStructure);
+  };
+
+  const handleCellChange = (cellIndex: number, newValue: string) => {
+    const updatedStructure = { ...proposedStructure };
+    updatedStructure.cells[cellIndex].content = newValue;
+    setProposedStructure(updatedStructure);
+  };
+
   const handledownloadNotebook = async () => {
     try {
       setGenerationStatus('generating');
@@ -162,11 +187,14 @@ export const Chat = () => {
         ) : null;
       
       case 'structure-proposed':
-        return proposedStructure && 'notebook_name' in proposedStructure && 'sections' in proposedStructure ? (
+        return proposedStructure && 'notebook_name' in proposedStructure && 'cells' in proposedStructure ? (
           <StructureProposal 
             structure={proposedStructure}
             onFeedback={handleStructureFeedback}
             onConfirm={handledownloadNotebook}
+            handleAddCell={handleAddCell}
+            handleCellTypeChange={handleCellTypeChange}
+            handleCellChange={handleCellChange}
           />
         ) : null;
       

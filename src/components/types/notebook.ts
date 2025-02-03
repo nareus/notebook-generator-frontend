@@ -11,14 +11,14 @@ export interface NotebookPage {
   content?: string;
 }
 
-export interface NotebookSection {
-  name: string;
-  pages: NotebookPage[];
+export interface NotebookCell {
+  type: string;
+  content: string;
 }
 
 export interface NotebookStructure {
   notebook_name: string;
-  sections: NotebookSection[];
+  cells: NotebookCell[];
 }
 
 export interface StructureResponse {
