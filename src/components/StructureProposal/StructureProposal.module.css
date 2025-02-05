@@ -137,14 +137,15 @@
 }
 .cell .contentInput {
   width: 100%;
-  min-height: 60px;
-  height: auto;
+  height: 200px;
   padding: 6px 10px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   font-size: 0.9rem;
   transition: all 0.2s ease;
   margin-bottom: 5px;
+  resize: none;
+  overflow: hidden;
 }
 .cell .contentInput:focus {
   outline: none;

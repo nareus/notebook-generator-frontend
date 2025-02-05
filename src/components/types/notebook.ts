@@ -36,6 +36,10 @@ export interface NotebookResponse {
   notebook: string;
 }
 
+export interface CellResponse {
+  content: string;
+}
+
 export class NotebookStructureClient {
   private static generate_structure_url = 'http://0.0.0.0:8000/generate_structure';
   private static generate_feedback_structure_url = 'http://0.0.0.0:8000/generate_feedback_structure';
@@ -106,6 +110,24 @@ export class NotebookStructureClient {
     }
   }
 
+  static async generateCellContent(topic: string, prompt: string): Promise<CellResponse> {
+    try {
+      const response = await axios.post<CellResponse>(
+        'http://0.0.0.0:8000/generate_cell_content',
+        { topic, prompt },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Response from server:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error generating cell content:', error);
+      throw error;
+    }
+  }
   static async generateFeedbackStructure(structure: string, feedback: string): Promise<StructureResponse> {
     try {
       const response = await axios.post<StructureResponse>(

@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { 
   NotebookStructure, 
   NotebookCell
 } from '../types/notebook';
 import styles from './StructureProposal.module.scss';
+import { CodeiumEditor } from "@codeium/react-code-editor";
+import MDEditor from '@uiw/react-md-editor';
 
 interface StructureProposalProps {
   structure: NotebookStructure;
@@ -12,36 +14,59 @@ interface StructureProposalProps {
   handleAddCell: () => void;
   handleCellTypeChange: (cellIndex: number, type: string) => void;
   handleCellChange: (cellIndex: number, content: string) => void;
+  generateContent: (cellIndex: number, prompt: string) => void;
 }
 
 export const StructureProposal = ({ structure, onFeedback, onConfirm, handleAddCell, handleCellTypeChange, 
-handleCellChange}: StructureProposalProps) => {
+handleCellChange, generateContent}: StructureProposalProps) => {
 
-  const renderCell = (cell: NotebookCell, cellIndex: number) => (
-    <div key={cellIndex} className={styles.cell}>
-      <div className={styles.cellTypeAndContent}>
-        <input
-          value={cell.type}
-          onChange={(e) => handleCellTypeChange(cellIndex, e.target.value)}
-          className={styles.cellType}
-        />
-        <textarea
-          value={cell.content}
-          onChange={(e) => handleCellChange(cellIndex, e.target.value)}
-          className={styles.contentInput}
-          rows={3}
-        />
+  const RenderCell = (cell: NotebookCell, cellIndex: number) => {
+
+    return (
+      <div key={cellIndex} className={styles.cell}>
+        <div className={styles.cellTypeAndContent}>
+          <select
+            value={cell.type}
+            onChange={(e) => handleCellTypeChange(cellIndex, e.target.value)}
+            className={styles.cellType}
+          >
+            <option value="markdown">Markdown</option>
+            <option value="code">Code</option>
+          </select>
+          {cell.type.toLowerCase() === 'code' ? (
+            <CodeiumEditor 
+              language="python" 
+              theme="vs-light"
+              value={cell.content}
+              onChange={(value) => handleCellChange(cellIndex, value || '')}
+            />
+          ) : (
+            <MDEditor
+              minHeight={500}
+              value={cell.content}
+              onChange={(value) => handleCellChange(cellIndex, value || '')}
+              className={styles.contentInput}
+              data-color-mode="light"
+            />
+          )}
+          <button
+            className={styles.addCellButton} 
+            onClick={() => generateContent(cellIndex, cell.content)}>
+            Generate Content
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
+  
   return (
     <div className={styles.structureProposalContainer}>
       <h2>{structure.notebook_name}</h2>
       <div className={styles.structureContent}>
         <h3>Proposed Notebook Structure</h3>
         {structure.cells.map((cell, index) => 
-          renderCell(cell, index)
+          RenderCell(cell, index)
         )}
         <button 
           onClick={handleAddCell}
@@ -75,6 +100,7 @@ handleCellChange}: StructureProposalProps) => {
             </button>
           </div>
         </div>
-      </div>    </div>
+      </div>    
+    </div>
   );
 };

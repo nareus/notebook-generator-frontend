@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { 
+  CellResponse,
   NotebookCell,
   NotebookResponse,
   NotebookStructure, 
@@ -16,7 +17,7 @@ export const Chat = () => {
   // Boolean state to track if notebook generation has been completed
   const [proposedTopics, setProposedTopics] = useState<[string, boolean][]>([]);
   const [indexToGenerate, setIndexToGenerate] = useState<number>(0);
-  const [generationStatus, setGenerationStatus] = useState<'idle' | 'loading-topics' | 'loading-structure' | 'structure-proposed' | 'topics-proposed' | 'generating' | 'completed' | 'error'>('idle');
+  const [generationStatus, setGenerationStatus] = useState<'idle' |'loading-cell-content'| 'loading-topics' | 'loading-structure' | 'structure-proposed' | 'topics-proposed' | 'generating' | 'completed' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [proposedStructure, setProposedStructure] = useState<NotebookStructure>({
     notebook_name: '',
@@ -126,6 +127,24 @@ export const Chat = () => {
     setProposedStructure(updatedStructure);
   };
 
+  const generateCellContent = async (cellIndex: number, prompt: string) => {
+    try {
+      const topicInput = proposedTopics[indexToGenerate][0];
+      setGenerationStatus('loading-cell-content');
+      const response : CellResponse = await NotebookStructureClient.generateCellContent(topicInput, prompt)
+      const content = response.content
+      const updatedStructure = { ...proposedStructure }
+      updatedStructure.cells[cellIndex].content = content
+      setProposedStructure(updatedStructure)
+      setGenerationStatus('structure-proposed');
+    }
+    catch (err) {
+      console.error('Content generation error:', err);
+      setError('Failed to generate notebook cell content');
+      setGenerationStatus('error');
+    }
+  };
+
   const handledownloadNotebook = async () => {
     try {
       setGenerationStatus('generating');
@@ -176,6 +195,13 @@ export const Chat = () => {
             <p>Generating notebook structure...</p>
           </div>
         );
+      case 'loading-cell-content':
+        return (
+          <div className={styles.statusContainer}>
+            <div className={styles.loadingSpinner}></div>
+            <p>Generating notebook cell content...</p>
+          </div>
+        );
       case 'topics-proposed':
         return proposedTopics ? (
           <TopicsProposal 
@@ -195,6 +221,7 @@ export const Chat = () => {
             handleAddCell={handleAddCell}
             handleCellTypeChange={handleCellTypeChange}
             handleCellChange={handleCellChange}
+            generateContent={generateCellContent}
           />
         ) : null;
       
