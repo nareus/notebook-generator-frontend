@@ -11,9 +11,13 @@ import { StructureProposal } from '../StructureProposal/StructureProposal';
 import styles from './Chat.module.scss';
 import { TopicsProposal } from '../TopicsProposal/TopicsProposal';
 import { DownloadNotebook } from '../DownloadNotebook/DownloadNotebook';
+import { NavBar } from '../NavBar/NavBar';
+
 
 
 export const Chat = () => {
+
+
   // Boolean state to track if notebook generation has been completed
   const [proposedTopics, setProposedTopics] = useState<[string, boolean][]>([]);
   const [indexToGenerate, setIndexToGenerate] = useState<number>(0);
@@ -148,10 +152,10 @@ export const Chat = () => {
   const handledownloadNotebook = async () => {
     try {
       setGenerationStatus('generating');
-      const notebook : NotebookResponse = await NotebookStructureClient.generateNotebook(proposedStructure)
+      const response : NotebookResponse = await NotebookStructureClient.generateNotebook(proposedStructure)
 
       // Create a Blob from the notebook content
-      const blob = new Blob([notebook.notebook], { type: 'application/json' });
+      const blob = new Blob([response.notebook], { type: 'application/json' });
       const url = window.URL.createObjectURL(blob);
       
       // Create a temporary link and trigger download
@@ -176,86 +180,128 @@ export const Chat = () => {
     }
   };
 
-  const renderContent = () => {
+  const handleBack = () => {
     switch(generationStatus) {
-      case 'idle':
-        return <TopicInput onTopicSubmit={generateNotebookTopics} />;
-      
-      case 'loading-topics':
-        return (
-          <div className={styles.statusContainer}>
-            <div className={styles.loadingSpinner}></div>
-            <p>Generating notebook topics...</p>
-          </div>
-        );
-      case 'loading-structure':
-        return (
-          <div className={styles.statusContainer}>
-            <div className={styles.loadingSpinner}></div>
-            <p>Generating notebook structure...</p>
-          </div>
-        );
-      case 'loading-cell-content':
-        return (
-          <div className={styles.statusContainer}>
-            <div className={styles.loadingSpinner}></div>
-            <p>Generating notebook cell content...</p>
-          </div>
-        );
       case 'topics-proposed':
-        return proposedTopics ? (
-          <TopicsProposal 
-            topics={proposedTopics}
-            onFeedback={handleTopicsFeedback}
-            setProposedTopics={setProposedTopics}
-            onConfirm={generateStructure}
-          />
-        ) : null;
-      
+        if(indexToGenerate > 0) {
+          setGenerationStatus('structure-proposed');
+          setIndexToGenerate(indexToGenerate - 1);
+        } else {
+          setGenerationStatus('idle');
+          setProposedTopics([]);
+        }
+        break;
       case 'structure-proposed':
-        return proposedStructure && 'notebook_name' in proposedStructure && 'cells' in proposedStructure ? (
-          <StructureProposal 
-            structure={proposedStructure}
-            onFeedback={handleStructureFeedback}
-            onConfirm={handledownloadNotebook}
-            handleAddCell={handleAddCell}
-            handleCellTypeChange={handleCellTypeChange}
-            handleCellChange={handleCellChange}
-            generateContent={generateCellContent}
-          />
-        ) : null;
-      
+        setGenerationStatus('topics-proposed');
+        setProposedStructure({
+          notebook_name: '',
+          cells: [{ type: '', content: '' }]
+        });
+        break;
       case 'generating':
-        return (
-          <div className={styles.statusContainer}>
-            <div className={styles.loadingSpinner}></div>
-            <p>Generating notebook...</p>
-          </div>
-        );
-      
-        case 'completed':
-          return (
-            <div>
-            <div className={styles.statusContainer}>
-              <p>Notebook generated successfully!</p>
-            </div>
-            {proposedStructure && 'notebook_name' in proposedStructure && 'sections' in proposedStructure && (
-              <DownloadNotebook downloadNotebook={handledownloadNotebook}  />
-            )}
-            </div>
-          );
-      
-      case 'error':
-        return (
-          <div className={styles.statusContainer}>
-            <p className={styles.errorMessage}>{error || 'An unexpected error occurred'}</p>
-          </div>
-        );
+        setGenerationStatus('structure-proposed');
+        break;
     }
   };
+
+  const renderContent = () => {
+    const showBackButton = ['topics-proposed', 'structure-proposed', 'generating'].includes(generationStatus);
+
+    return (
+      <>
+        {showBackButton && (
+          <button className={styles.backButton} onClick={handleBack}>
+            ← Back
+          </button>
+        )}
+        {(() => {
+          switch(generationStatus) {
+            case 'idle':
+              return <TopicInput onTopicSubmit={generateNotebookTopics} />;
+            
+            case 'loading-topics':
+              return (
+                <div className={styles.statusContainer}>
+                  <div className={styles.loadingSpinner}></div>
+                  <p>Generating notebook topics...</p>
+                </div>
+              );
+            case 'loading-structure':
+              return (
+                <div className={styles.statusContainer}>
+                  <div className={styles.loadingSpinner}></div>
+                  <p>Generating notebook structure...</p>
+                </div>
+              );
+            case 'loading-cell-content':
+              return (
+                <div className={styles.statusContainer}>
+                  <div className={styles.loadingSpinner}></div>
+                  <p>Generating notebook cell content...</p>
+                </div>
+              );
+            case 'topics-proposed':
+              return proposedTopics ? (
+                <TopicsProposal 
+                  topics={proposedTopics}
+                  onFeedback={handleTopicsFeedback}
+                  setProposedTopics={setProposedTopics}
+                  onConfirm={generateStructure}
+                />
+              ) : null;
+            
+            case 'structure-proposed':
+              return proposedStructure && 'notebook_name' in proposedStructure && 'cells' in proposedStructure ? (
+                <StructureProposal 
+                  structure={proposedStructure}
+                  onFeedback={handleStructureFeedback}
+                  onConfirm={handledownloadNotebook}
+                  handleAddCell={handleAddCell}
+                  handleCellTypeChange={handleCellTypeChange}
+                  handleCellChange={handleCellChange}
+                  generateContent={generateCellContent}
+                />
+              ) : null;
+            
+            case 'generating':
+              return (
+                <div className={styles.statusContainer}>
+                  <div className={styles.loadingSpinner}></div>
+                  <p>Generating notebook...</p>
+                </div>
+              );
+            
+              case 'completed':
+                return (
+                  <div>
+                  <div className={styles.statusContainer}>
+                    <p>Notebook generated successfully!</p>
+                  </div>
+                  {proposedStructure && 'notebook_name' in proposedStructure && 'sections' in proposedStructure && (
+                    <DownloadNotebook downloadNotebook={handledownloadNotebook}  />
+                  )}
+                  </div>
+                );
+            
+            case 'error':
+              return (
+                <div className={styles.statusContainer}>
+                  <p className={styles.errorMessage}>{error || 'An unexpected error occurred'}</p>
+                </div>
+              );
+          }
+        })()}
+      </>
+    );
+  };
   return (
-    <div className={styles.notebookGeneratorContainer}>
-      {renderContent()}
+    <div>
+      <NavBar />
+    <div className={styles.mainContainer}>
+      <div className={styles.notebookGeneratorContainer}>    
+        {renderContent()}
+      </div>
+    </div>
     </div>
   );
 };
