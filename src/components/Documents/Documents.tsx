@@ -1,11 +1,14 @@
 import { ChangeEvent, useState, useEffect } from "react";
 import { NavBar } from "../NavBar/NavBar"
 import { NotebookStructureClient } from "../utils/notebook";
+import styles from './Documents.module.scss';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const Documents = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [documents, setDocuments] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         getFileNames();
@@ -33,6 +36,18 @@ export const Documents = () => {
         }
     };
 
+    const handleDeleteFile = async (fileName: string) => {
+        try {
+            setIsDeleting(true);
+            await NotebookStructureClient.deletePDF(fileName);
+            getFileNames();
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
     const getFileNames = async () => {
         try {
             const documents = await NotebookStructureClient.getDocuments();
@@ -46,32 +61,51 @@ export const Documents = () => {
     return(
         <div>
             <NavBar />
+            <div className={styles.documentsContainer}>
             <h1>Upload Documents</h1>
-            <input 
-                type="file" 
-                accept=".pdf,application/pdf" 
-                onChange={handleFileSelect}
-                disabled={isUploading}
-            />
-            <button 
-                onClick={handleUploadConfirm}
-                disabled={!selectedFile || isUploading}
-            >
-                {isUploading ? 'Uploading...' : 'Confirm Upload'}
-            </button>
+            <div className={styles.uploadSection}>
+                <input 
+                    type="file" 
+                    accept=".pdf,application/pdf" 
+                    onChange={handleFileSelect}
+                    disabled={isUploading}
+                />
+                <button 
+                    onClick={handleUploadConfirm}
+                    disabled={!selectedFile || isUploading}
+                >
+                    {isUploading ? 'Uploading...' : 'Confirm Upload'}
+                </button>
+            </div>
 
             {isUploading && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-4 rounded-lg shadow-lg">
-                        <p className="text-lg">Uploading document...</p>
-                        <div className="mt-2 animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                <div className={styles.uploadOverlay}>
+                    <div className={styles.uploadModal}>
+                        <p>Uploading document...</p>
+                        <div className={styles.spinner}></div>
+                    </div>
+                </div>
+            )}
+            {isDeleting && (
+                <div className={styles.uploadOverlay}>
+                    <div className={styles.uploadModal}>
+                        <p>Deleting document...</p>
+                        <div className={styles.spinner}></div>
                     </div>
                 </div>
             )}
 
-            {documents.map((filename) => (
-                <div key={filename}>{filename}</div>
-            ))}
+            <div className={styles.documentList}>
+                <h2>Uploaded Documents</h2>
+                {documents.map((filename) => (
+                    <div className={styles.documentItem} key={filename}>
+                    <div>{filename}</div>
+                    <DeleteIcon className={styles.deleteIcon} onClick={() => handleDeleteFile(filename)} />
+                    </div>
+                    
+                ))}
+            </div>
+        </div>
         </div>
     )
 }

@@ -52,6 +52,10 @@ export interface IndexPDFResponse {
   message: string;
 }
 
+export interface DeletePDFResponse {
+  message: string;
+}
+
 export class NotebookStructureClient {
   private static generate_structure_url = 'http://0.0.0.0:8000/generate_structure';
   private static generate_feedback_structure_url = 'http://0.0.0.0:8000/generate_feedback_structure';
@@ -219,4 +223,22 @@ export class NotebookStructureClient {
       throw error;
     }
   }
+
+  static async deletePDF(filename: string): Promise<void> {
+    try {
+      const response = await axios.post<DeletePDFResponse>(
+        'http://0.0.0.0:8000/delete_pdf',
+        {filename},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+        console.log('PDF deletion response:', response.data);
+    } catch (error) {
+        console.error('Error deleting PDF:', error);
+        throw error;
+    }
+}
 }
