@@ -40,6 +40,18 @@ export interface CellResponse {
   content: string;
 }
 
+export interface  Documents {
+  documents: string[];
+}
+
+export interface IndexPDFRequest {
+  file: File;
+}
+
+export interface IndexPDFResponse {
+  message: string;
+}
+
 export class NotebookStructureClient {
   private static generate_structure_url = 'http://0.0.0.0:8000/generate_structure';
   private static generate_feedback_structure_url = 'http://0.0.0.0:8000/generate_feedback_structure';
@@ -165,6 +177,45 @@ export class NotebookStructureClient {
       return response.data;
     } catch (error) {
       console.error('Error generating notebook:', error);
+      throw error;
+    }
+  }
+
+  static async getDocuments() : Promise<Documents> {
+    try {
+      const response = await axios.get<Documents>(
+        'http://0.0.0.0:8000/get_documents',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Response from server:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error generating notebook:', error);
+      throw error;
+    }
+  }
+
+  static async indexPDF(file: File): Promise<void> {
+    const formData = new FormData();
+    formData.append('file', file);
+  
+    try {
+      const response = await axios.post<IndexPDFResponse>(
+        'http://0.0.0.0:8000/index_pdf',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      console.log('PDF indexing response:', response.data.message);
+    } catch (error) {
+      console.error('Error indexing PDF:', error);
       throw error;
     }
   }

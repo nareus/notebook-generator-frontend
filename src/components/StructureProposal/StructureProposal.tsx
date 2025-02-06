@@ -1,7 +1,7 @@
 import { 
   NotebookStructure, 
   NotebookCell
-} from '../types/notebook';
+} from '../utils/notebook';
 import styles from './StructureProposal.module.scss';
 import { CodeiumEditor } from "@codeium/react-code-editor";
 import MDEditor from '@uiw/react-md-editor';

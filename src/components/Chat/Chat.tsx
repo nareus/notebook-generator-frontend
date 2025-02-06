@@ -5,7 +5,7 @@ import {
   NotebookResponse,
   NotebookStructure, 
   NotebookStructureClient
-} from '../types/notebook';
+} from '../utils/notebook';
 import { TopicInput } from '../TopicInput/TopicInput';
 import { StructureProposal } from '../StructureProposal/StructureProposal';
 import styles from './Chat.module.scss';
