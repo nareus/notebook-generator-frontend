@@ -1,6 +1,12 @@
 .documentsContainer {
   width: 100%;
   padding: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
 }
 
 .uploadSection {
@@ -69,5 +75,58 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+.multiselect {
+  position: relative;
+  width: 100%;
+}
+
+.multiselectHeader {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:after {
+    content: "▼";
+    font-size: 0.8em;
+    margin-left: 0.5rem;
+  }
+}
+
+.multiselectDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.multiselectOption {
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  input[type="checkbox"] {
+    margin: 0;
   }
 }

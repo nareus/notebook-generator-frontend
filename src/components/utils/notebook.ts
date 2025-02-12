@@ -44,15 +44,19 @@ export interface  Documents {
   documents: string[];
 }
 
-export interface IndexPDFRequest {
+export interface IndexDocumentRequest {
   file: File;
 }
 
-export interface IndexPDFResponse {
+export interface IndexDocumentResponse {
   message: string;
 }
 
-export interface DeletePDFResponse {
+export interface DeleteDocumentResponse {
+  message: string;
+}
+
+export interface SelectDocumentsResponse {
   message: string;
 }
 
@@ -203,12 +207,12 @@ export class NotebookStructureClient {
     }
   }
 
-  static async indexPDF(file: File): Promise<void> {
+  static async indexDocument(file: File): Promise<void> {
     const formData = new FormData();
     formData.append('file', file);
   
     try {
-      const response = await axios.post<IndexPDFResponse>(
+      const response = await axios.post<IndexDocumentResponse>(
         'http://0.0.0.0:8000/index_pdf',
         formData,
         {
@@ -224,9 +228,9 @@ export class NotebookStructureClient {
     }
   }
 
-  static async deletePDF(filename: string): Promise<void> {
+  static async deleteDocument(filename: string): Promise<void> {
     try {
-      const response = await axios.post<DeletePDFResponse>(
+      const response = await axios.post<DeleteDocumentResponse>(
         'http://0.0.0.0:8000/delete_pdf',
         {filename},
         {
@@ -240,5 +244,23 @@ export class NotebookStructureClient {
         console.error('Error deleting PDF:', error);
         throw error;
     }
-}
+  }
+  
+  static async selectDocuments(filenames: string[]): Promise<void> {
+    try {
+      const response = await axios.post<SelectDocumentsResponse>(
+        'http://0.0.0.0:8000/select_pdfs',
+        { filenames },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('PDF selection response:', response.data);
+    } catch (error) {
+      console.error('Error selecting PDFs:', error);
+      throw error;
+    }
+  }
 }

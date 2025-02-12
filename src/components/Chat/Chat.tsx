@@ -34,10 +34,11 @@ export const Chat = () => {
   });
 
 
-  const generateNotebookTopics = async (topic: string, notebookCount: number) => {
+  const generateNotebookTopics = async (topic: string, notebookCount: number, selectedDocs: string[]) => {
     try {
       setGenerationStatus('loading-topics');
 
+      const message = await NotebookStructureClient.selectDocuments(selectedDocs);
       const response = await NotebookStructureClient.generateTopics(topic, notebookCount);
       
       setProposedTopics(response.topics.map(str => [str, false]));

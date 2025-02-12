@@ -25,7 +25,7 @@ export const Documents = () => {
         if (selectedFile) {
             setIsUploading(true);
             try {
-                await NotebookStructureClient.indexPDF(selectedFile);
+                await NotebookStructureClient.indexDocument(selectedFile);
                 setSelectedFile(null);
                 getFileNames();
             } catch (error) {
@@ -39,7 +39,7 @@ export const Documents = () => {
     const handleDeleteFile = async (fileName: string) => {
         try {
             setIsDeleting(true);
-            await NotebookStructureClient.deletePDF(fileName);
+            await NotebookStructureClient.deleteDocument(fileName);
             getFileNames();
         } catch (error) {
             console.error('Error deleting file:', error);
