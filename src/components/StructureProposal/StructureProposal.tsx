@@ -5,6 +5,8 @@ import {
 import styles from './StructureProposal.module.scss';
 import { CodeiumEditor } from "@codeium/react-code-editor";
 import MDEditor from '@uiw/react-md-editor';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 interface StructureProposalProps {
   structure: NotebookStructure;
@@ -13,26 +15,39 @@ interface StructureProposalProps {
   handleAddCell: () => void;
   handleCellTypeChange: (cellIndex: number, type: string) => void;
   handleCellChange: (cellIndex: number, content: string) => void;
-  generateContent: (cellIndex: number, prompt: string) => void;
+  handleCellOrderChange: (cellIndex: number, direction: 'up' | 'down') => void;
+  generateContent: (cellIndex: number, prompt: string, cellType: string) => void;
+  generateAllCells: () => void;
 }
 
 export const StructureProposal = ({ structure, onFeedback, onConfirm, handleAddCell, handleCellTypeChange, 
-handleCellChange, generateContent}: StructureProposalProps) => {
+handleCellChange, handleCellOrderChange, generateContent, generateAllCells}: StructureProposalProps) => {
 
   const RenderCell = (cell: NotebookCell, cellIndex: number) => {
-
+    // Define which cell types should render with CodeiumEditor
+    const codeCellTypes = ['code_snippet', 'code_with_output', 'code_with_visualization'];
     return (
       <div key={cellIndex} className={styles.cell}>
+        <div className={styles.arrows}>
+          <ArrowUpwardIcon className={styles.arrow} onClick={() => handleCellOrderChange(cellIndex, 'up')}/>
+          <ArrowDownwardIcon className={styles.arrow} onClick={() => handleCellOrderChange(cellIndex, 'down')}/>
+        </div>
+        
         <div className={styles.cellTypeAndContent}>
           <select
             value={cell.type}
             onChange={(e) => handleCellTypeChange(cellIndex, e.target.value)}
             className={styles.cellType}
           >
-            <option value="markdown">Markdown</option>
-            <option value="code">Code</option>
+            <option value="short_paragraph">Short Paragraph</option>
+            <option value="multiple_paragraphs">Multiple Paragraphs</option>
+            <option value="bullet_points">Bullet Points</option>
+            <option value="code_snippet">Code Snippet</option>
+            <option value="code_with_output">Code With Output</option>
+            <option value="code_with_visualization">Code With Visualization</option>
+            <option value="blockquote">Blockquote</option>
           </select>
-          {cell.type.toLowerCase() === 'code' ? (
+          {codeCellTypes.includes(cell.type.toLowerCase()) ? (
             <CodeiumEditor 
               language="python" 
               theme="vs-light"
@@ -48,11 +63,22 @@ handleCellChange, generateContent}: StructureProposalProps) => {
               data-color-mode="light"
             />
           )}
-          <button
-            className={styles.addCellButton} 
-            onClick={() => generateContent(cellIndex, cell.content)}>
-            Generate Content
-          </button>
+          {!cell.generated ? (
+            cell.loading ? (
+              <div className={styles.loadingSpinner}></div>
+            ) : (
+              <button
+                className={styles.addCellButton} 
+                onClick={() => generateContent(cellIndex, cell.content, cell.type)}
+              >
+                Generate Content
+              </button>
+            )
+          ) : (
+            <button className={styles.contentGeneratedButton}>
+              Content Generated
+            </button>
+          )}
         </div>
       </div>
     );
@@ -61,7 +87,12 @@ handleCellChange, generateContent}: StructureProposalProps) => {
   
   return (
     <div className={styles.structureProposalContainer}>
-      <h2>{structure.notebook_name}</h2>
+      <div className={styles.header}>
+        <h2>{structure.notebook_name}</h2>
+        <button className={styles.generateAllButton} onClick={() => generateAllCells()}>
+          Generate All Content
+        </button>
+      </div>
       <div className={styles.structureContent}>
         <h3>Proposed Notebook Structure</h3>
         {structure.cells.map((cell, index) => 

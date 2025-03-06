@@ -14,6 +14,8 @@ export interface NotebookPage {
 export interface NotebookCell {
   type: string;
   content: string;
+  generated?: boolean;
+  loading?: boolean;
 }
 
 export interface NotebookStructure {
@@ -38,6 +40,9 @@ export interface NotebookResponse {
 
 export interface CellResponse {
   content: string;
+}
+export interface AllCellResponse {
+  structure: NotebookStructure;
 }
 
 export interface  Documents {
@@ -68,7 +73,6 @@ export class NotebookStructureClient {
   private static generate_notebook_url = 'http://0.0.0.0:8000/generate_notebook';
 
   static async generateTopics(topic: string, notebook_count: number): Promise<TopicResponse> {
-    console.log("topic :",  topic, notebook_count, notebook_count)
     try {
       const response = await axios.post<TopicResponse>(
         this.generate_topics_url,
@@ -130,11 +134,11 @@ export class NotebookStructureClient {
     }
   }
 
-  static async generateCellContent(topic: string, prompt: string): Promise<CellResponse> {
+  static async generateCellContent(topic: string, prompt: string, type: string): Promise<CellResponse> {
     try {
       const response = await axios.post<CellResponse>(
         'http://0.0.0.0:8000/generate_cell_content',
-        { topic, prompt },
+        { topic, prompt, type },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -148,6 +152,26 @@ export class NotebookStructureClient {
       throw error;
     }
   }
+  
+  static async generateAllCells(structure: NotebookStructure): Promise<StructureResponse> {
+    try {
+      const response = await axios.post<StructureResponse>(
+        'http://0.0.0.0:8000/generate_all_cells',
+        {'structure' : structure },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Response from server:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error generating cell content:', error);
+      throw error;
+    }
+  }
+
   static async generateFeedbackStructure(structure: string, feedback: string): Promise<StructureResponse> {
     try {
       const response = await axios.post<StructureResponse>(

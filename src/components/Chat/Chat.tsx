@@ -4,7 +4,8 @@ import {
   NotebookCell,
   NotebookResponse,
   NotebookStructure, 
-  NotebookStructureClient
+  NotebookStructureClient,
+  StructureResponse
 } from '../utils/notebook';
 import { TopicInput } from '../TopicInput/TopicInput';
 import { StructureProposal } from '../StructureProposal/StructureProposal';
@@ -27,8 +28,9 @@ export const Chat = () => {
     notebook_name: '',
     cells: [
       {
-            type: '',
+            type: 'short_paragraph',
             content: '',
+            generated: false,
       }
     ]
   });
@@ -37,8 +39,9 @@ export const Chat = () => {
   const generateNotebookTopics = async (topic: string, notebookCount: number, selectedDocs: string[]) => {
     try {
       setGenerationStatus('loading-topics');
-
-      const message = await NotebookStructureClient.selectDocuments(selectedDocs);
+      // if (selectedDocs.length != 0) {
+      await NotebookStructureClient.selectDocuments(selectedDocs);
+      // }
       const response = await NotebookStructureClient.generateTopics(topic, notebookCount);
       
       setProposedTopics(response.topics.map(str => [str, false]));
@@ -74,7 +77,7 @@ export const Chat = () => {
       const topicInput = proposedTopics[indexToGenerate][0];
   
       const response = await NotebookStructureClient.generateStructure(topicInput);
-      
+      console.log("initial structure", response.structure)
       setProposedStructure(response.structure);
       setGenerationStatus('structure-proposed');
     } catch (err) {
@@ -129,18 +132,63 @@ export const Chat = () => {
   const handleCellChange = (cellIndex: number, newValue: string) => {
     const updatedStructure = { ...proposedStructure };
     updatedStructure.cells[cellIndex].content = newValue;
+    console.log("updated structure", updatedStructure)
     setProposedStructure(updatedStructure);
   };
 
-  const generateCellContent = async (cellIndex: number, prompt: string) => {
+  const handleCellOrderChange = (cellIndex: number, direction: 'up' | 'down') => {
+   const updatedStructure = { ...proposedStructure };
+   if (direction === 'down' && cellIndex < updatedStructure.cells.length - 1) {
+    const temporaryCell = updatedStructure.cells[cellIndex + 1];
+    updatedStructure.cells[cellIndex + 1] = updatedStructure.cells[cellIndex]
+    updatedStructure.cells[cellIndex] = temporaryCell
+   }
+
+   if (direction === 'up' && cellIndex > 0) {
+    const temporaryCell = updatedStructure.cells[cellIndex - 1];
+    updatedStructure.cells[cellIndex - 1] = updatedStructure.cells[cellIndex]
+    updatedStructure.cells[cellIndex] = temporaryCell
+   }
+  
+   setProposedStructure(updatedStructure);
+   console.log("updated structure: ", updatedStructure)
+  }
+   
+
+  const generateCellContent = async (cellIndex: number, prompt: string, cellType: string) => {
     try {
       const topicInput = proposedTopics[indexToGenerate][0];
+      // Mark the current cell as loading
+      setProposedStructure(prev => {
+        const newCells = prev.cells.map((cell, idx) => 
+          idx === cellIndex ? { ...cell, loading: true } : cell
+        );
+        return { ...prev, cells: newCells };
+      });
+  
+      const response: CellResponse = await NotebookStructureClient.generateCellContent(topicInput, prompt, cellType);
+      const content = response.content;
+  
+      // Update the cell with the new content and mark loading as false
+      setProposedStructure(prev => {
+        const newCells = prev.cells.map((cell, idx) => 
+          idx === cellIndex ? { ...cell, content, generated: true, loading: false } : cell
+        );
+        return { ...prev, cells: newCells };
+      });
+      setGenerationStatus('structure-proposed');
+    } catch (err) {
+      console.error('Content generation error:', err);
+      setError('Failed to generate notebook cell content');
+      setGenerationStatus('error');
+    }
+  };
+
+  const generateAllCells = async () => {
+    try {
       setGenerationStatus('loading-cell-content');
-      const response : CellResponse = await NotebookStructureClient.generateCellContent(topicInput, prompt)
-      const content = response.content
-      const updatedStructure = { ...proposedStructure }
-      updatedStructure.cells[cellIndex].content = content
-      setProposedStructure(updatedStructure)
+      const response : StructureResponse = await NotebookStructureClient.generateAllCells(proposedStructure)
+      setProposedStructure(response.structure)
       setGenerationStatus('structure-proposed');
     }
     catch (err) {
@@ -260,7 +308,9 @@ export const Chat = () => {
                   handleAddCell={handleAddCell}
                   handleCellTypeChange={handleCellTypeChange}
                   handleCellChange={handleCellChange}
+                  handleCellOrderChange={handleCellOrderChange}
                   generateContent={generateCellContent}
+                  generateAllCells={generateAllCells}
                 />
               ) : null;
             
