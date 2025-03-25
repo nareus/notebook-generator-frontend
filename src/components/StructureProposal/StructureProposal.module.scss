@@ -29,13 +29,18 @@
   }
 
   .structureContent {
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     border-radius: 6px;
     padding: 1rem;
     margin-bottom: 1.5rem;
 
-    .addCellButton {
+    .cellButtons {
+      display: flex;
+      flex-direction: row;
       margin-top: 20px;
+    }
+
+    .addCellButton {
       padding: 8px 16px;
       background-color: #007bff;
       color: white;
@@ -49,7 +54,6 @@
       }
     }
     .contentGeneratedButton {
-      margin-top: 20px;
       padding: 8px 16px;
       background-color: #22993c;
       color: white;
@@ -57,6 +61,16 @@
       border-radius: 4px;
       cursor: pointer;
       margin-bottom: 20px;
+    }
+
+    .deleteIcon {
+      margin-top: 2px;
+      margin-left: 10px;
+      &:hover {
+        cursor: pointer;
+        color: red;
+        transition: color 0.2s ease;
+      }
     }
 
     .loadingSpinner {

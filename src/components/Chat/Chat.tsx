@@ -23,7 +23,8 @@ export const Chat = () => {
   const [proposedTopics, setProposedTopics] = useState<[string, boolean][]>([]);
   const [indexToGenerate, setIndexToGenerate] = useState<number>(0);
   const [generationStatus, setGenerationStatus] = useState<'idle' |'loading-cell-content'| 'loading-topics' | 'loading-structure' | 'structure-proposed' | 'topics-proposed' | 'generating' | 'completed' | 'error'>('idle');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>('idle');
+  const [stateBeforeError, setStateBeforeError] = useState<string | null>(null);
   const [proposedStructure, setProposedStructure] = useState<NotebookStructure>({
     notebook_name: '',
     cells: [
@@ -49,6 +50,7 @@ export const Chat = () => {
     } catch (err) {
       console.error('Topic generation error:', err);
       setError('Failed to generate notebook topics');
+      setStateBeforeError(generationStatus);
       setGenerationStatus('error');
     }
   };
@@ -67,6 +69,7 @@ export const Chat = () => {
     } catch (err) {
       console.error('Structure generation error:', err);
       setError('Failed to generate notebook topics after feedback');
+      setStateBeforeError(generationStatus);
       setGenerationStatus('error');
     }
   };
@@ -83,6 +86,7 @@ export const Chat = () => {
     } catch (err) {
       console.error('Structure generation error:', err);
       setError('Failed to generate notebook structure');
+      setStateBeforeError(generationStatus);
       setGenerationStatus('error');
     }
   };
@@ -101,6 +105,7 @@ export const Chat = () => {
     } catch (err) {
       console.error('Structure generation error:', err);
       setError('Failed to generate notebook structure');
+      setStateBeforeError(generationStatus);
       setGenerationStatus('error');
     }
   };
@@ -117,11 +122,11 @@ export const Chat = () => {
     }));
   };
 
-  // const handleDeleteSection = (sectionIndex: number) => {
-  //   const updatedStructure = { ...editableStructure };
-  //   updatedStructure.sections.splice(sectionIndex, 1);
-  //   setEditableStructure(updatedStructure);
-  // }; 
+  const handleDeleteCell = (sectionIndex: number) => {
+    const updatedStructure = { ...proposedStructure };
+    updatedStructure.cells.splice(sectionIndex, 1);
+    setProposedStructure(updatedStructure);
+  }; 
 
   const handleCellTypeChange = (cellIndex: number, newValue: string) => {
     const updatedStructure = { ...proposedStructure };
@@ -180,6 +185,7 @@ export const Chat = () => {
     } catch (err) {
       console.error('Content generation error:', err);
       setError('Failed to generate notebook cell content');
+      setStateBeforeError(generationStatus);
       setGenerationStatus('error');
     }
   };
@@ -194,6 +200,7 @@ export const Chat = () => {
     catch (err) {
       console.error('Content generation error:', err);
       setError('Failed to generate notebook cell content');
+      setStateBeforeError(generationStatus);
       setGenerationStatus('error');
     }
   };
@@ -250,11 +257,14 @@ export const Chat = () => {
       case 'generating':
         setGenerationStatus('structure-proposed');
         break;
+      case 'error': 
+        setGenerationStatus(stateBeforeError);
+      
     }
   };
 
   const renderContent = () => {
-    const showBackButton = ['topics-proposed', 'structure-proposed', 'generating'].includes(generationStatus);
+    const showBackButton = ['topics-proposed', 'structure-proposed', 'generating', 'error'].includes(generationStatus);
 
     return (
       <>
@@ -286,7 +296,7 @@ export const Chat = () => {
               return (
                 <div className={styles.statusContainer}>
                   <div className={styles.loadingSpinner}></div>
-                  <p>Generating notebook cell content...</p>
+                  <p>Generating all notebook cell content</p>
                 </div>
               );
             case 'topics-proposed':
@@ -309,6 +319,7 @@ export const Chat = () => {
                   handleCellTypeChange={handleCellTypeChange}
                   handleCellChange={handleCellChange}
                   handleCellOrderChange={handleCellOrderChange}
+                  handleDeleteCell={handleDeleteCell}
                   generateContent={generateCellContent}
                   generateAllCells={generateAllCells}
                 />
