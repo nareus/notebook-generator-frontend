@@ -1,5 +1,5 @@
-import { 
-  NotebookStructure, 
+import {
+  NotebookStructure,
   NotebookCell
 } from '../utils/notebook';
 import styles from './StructureProposal.module.scss';
@@ -22,8 +22,8 @@ interface StructureProposalProps {
   generateAllCells: () => void;
 }
 
-export const StructureProposal = ({ structure, onFeedback, onConfirm, handleAddCell, handleCellTypeChange, 
-handleCellChange, handleCellOrderChange, handleDeleteCell, generateContent, generateAllCells}: StructureProposalProps) => {
+export const StructureProposal = ({ structure, onFeedback, onConfirm, handleAddCell, handleCellTypeChange,
+  handleCellChange, handleCellOrderChange, handleDeleteCell, generateContent, generateAllCells }: StructureProposalProps) => {
 
   const RenderCell = (cell: NotebookCell, cellIndex: number) => {
     // Define which cell types should render with CodeiumEditor
@@ -31,10 +31,10 @@ handleCellChange, handleCellOrderChange, handleDeleteCell, generateContent, gene
     return (
       <div key={cellIndex} className={styles.cell}>
         <div className={styles.arrows}>
-          <ArrowUpwardIcon className={styles.arrow} onClick={() => handleCellOrderChange(cellIndex, 'up')}/>
-          <ArrowDownwardIcon className={styles.arrow} onClick={() => handleCellOrderChange(cellIndex, 'down')}/>
+          <ArrowUpwardIcon className={styles.arrow} onClick={() => handleCellOrderChange(cellIndex, 'up')} />
+          <ArrowDownwardIcon className={styles.arrow} onClick={() => handleCellOrderChange(cellIndex, 'down')} />
         </div>
-        
+
         <div className={styles.cellTypeAndContent}>
           <select
             value={cell.type}
@@ -50,8 +50,8 @@ handleCellChange, handleCellOrderChange, handleDeleteCell, generateContent, gene
             <option value="numbered_list">Numbered List</option>
           </select>
           {codeCellTypes.includes(cell.type.toLowerCase()) ? (
-            <CodeiumEditor 
-              language="python" 
+            <CodeiumEditor
+              language="python"
               theme="vs-light"
               value={cell.content}
               onChange={(value) => handleCellChange(cellIndex, value || '')}
@@ -71,7 +71,7 @@ handleCellChange, handleCellOrderChange, handleDeleteCell, generateContent, gene
                 <div className={styles.loadingSpinner}></div>
               ) : (
                 <button
-                  className={styles.addCellButton} 
+                  className={styles.addCellButton}
                   onClick={() => generateContent(cellIndex, cell.content, cell.type)}
                 >
                   Generate Content
@@ -89,7 +89,7 @@ handleCellChange, handleCellOrderChange, handleDeleteCell, generateContent, gene
     );
   };
 
-  
+
   return (
     <div className={styles.structureProposalContainer}>
       <div className={styles.header}>
@@ -100,17 +100,17 @@ handleCellChange, handleCellOrderChange, handleDeleteCell, generateContent, gene
       </div>
       <div className={styles.structureContent}>
         <h3>Proposed Notebook Structure</h3>
-        {structure.cells.map((cell, index) => 
+        {structure.cells.map((cell, index) =>
           RenderCell(cell, index)
         )}
-        <button 
+        <button
           onClick={handleAddCell}
           className={styles.addCellButton}
         >
           Add New Cell
         </button>
         <div className={styles.feedbackSection}>
-          <textarea 
+          <textarea
             placeholder="Provide feedback on the structure (optional)"
             className={styles.feedbackInput}
             onKeyDown={(e) => {
@@ -127,7 +127,7 @@ handleCellChange, handleCellOrderChange, handleDeleteCell, generateContent, gene
             >
               Update Structure
             </button>
-            <button 
+            <button
               onClick={onConfirm}
               className={styles.confirmButton}
             >
@@ -135,7 +135,7 @@ handleCellChange, handleCellOrderChange, handleDeleteCell, generateContent, gene
             </button>
           </div>
         </div>
-      </div>    
+      </div>
     </div>
   );
 };
